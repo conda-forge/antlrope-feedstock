@@ -11,7 +11,7 @@ context:
   # sdist below) — not read from the repo's src/antlrope/VERSION, which is
   # the dev version and may be ahead of the latest release. Placeholder until the
   # first PyPI release; on conda-forge the autotick bot bumps it per release.
-  version: "1.0.1"
+  version: "1.0.2"
 
 package:
   name: ${{ name }}
@@ -21,7 +21,7 @@ source:
   # Prefer the PyPI sdist (carries the vendored runtime). Replace sha256 on each
   # release.
   url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/antlrope-${{ version }}.tar.gz
-  sha256: "678b235a7ed094074fa0c28133ee99d0570c44954307a474c5ed8d5fc377ecaa"
+  sha256: "a4093fd872516fe3eef3522bc054712194bb7cbd81fd4d647e4d2071893bd648"
 
 build:
   number: 0
@@ -62,6 +62,13 @@ requirements:
     - ${{ stdlib('c') }}
     - cmake >=3.21
     - ninja
+    # Only used when cross-compiling (all platforms currently build natively):
+    # a build-platform python, matching the host python, for pip and
+    # scikit-build-core to run.
+    - if: build_platform != host_platform
+      then:
+        - python ${{ python_min }}.*
+        - cross-python_${{ host_platform }}
   host:
     # Build against the 3.12 floor; python-abi3 sets up the Stable-ABI build and
     # carries the run_exports that pin the runtime to `python >=3.12` + python-abi3.
